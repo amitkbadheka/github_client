@@ -1,4 +1,7 @@
 require 'httparty'
+require_relative './helpers/paginotor.rb'
+include  Helpers::Paginator
+
 
 module Github
   class Client
@@ -15,11 +18,11 @@ module Github
 
     def get(url)
       # this method generates the required headers that use the bearer token 
-      # and makes a GET request to the Github API using the provided URL.
+      # and paginates the GET request to the Github API using the provided URL.
       # It returns the response from the Github API
       # It appends the path in the url argument to the repo_url instance variable
       # to form the full URL
-      HTTParty.get("#{@repo_url}#{url}", headers: headers)
+      paginate("#{@repo_url}#{url}", headers, :http)
     end
 
     private

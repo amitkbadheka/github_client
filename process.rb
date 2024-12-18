@@ -22,9 +22,7 @@ module Github
       # Return a list of issues from the response, with each line showing the issue's title, whether it is open or closed,
       # and the date the issue was closed if it is closed, or the date the issue was created if it is open.
       # the issues are sorted by the date they were closed or created, from newest to oldest.
-      
-      response = @client.get("/issues?state=#{state}")
-      issues = JSON.parse(response.body)
+      issues = @client.get("/issues?state=#{state}")
       sorted_issues = issues.sort_by do |issue|
         if state == 'closed'
           issue['closed_at']
@@ -33,11 +31,11 @@ module Github
         end
       end.reverse
       
-      sorted_issues.each do |issue|
+      sorted_issues.each_with_index do |issue, i|
         if issue['state'] == 'closed'
-          puts "#{issue['title']} - #{issue['state']} - Closed at: #{issue['closed_at']}"
+          puts "#{i+1}: #{issue['title']} - #{issue['state']} - Closed at: #{issue['closed_at']}"
         else
-          puts "#{issue['title']} - #{issue['state']} - Created at: #{issue['created_at']}"
+          puts "#{i+1}: #{issue['title']} - #{issue['state']} - Created at: #{issue['created_at']}"
         end
       end
     end
@@ -45,4 +43,5 @@ module Github
 end
 # The URL to make API requests for the IBM organization and the jobs repository
 # would be 'https://api.github.com/repos/ibm/jobs'.
+
 Github::Processor.new(Github::Client.new(ENV['TOKEN'], ARGV[0])).issues(open: false)
